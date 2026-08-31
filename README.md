@@ -1,5 +1,7 @@
 # Obsidian Plugin Download Stats
 
+[https://yulei-chen.github.io/obsidian-plugin-download-stats](https://yulei-chen.github.io/obsidian-plugin-download-stats/#)
+
 Look up any Obsidian community plugin and chart its download history, daily,
 weekly or monthly.
 
@@ -39,7 +41,7 @@ repository itself stays at a few hundred kilobytes of code.**
 
 ## Three modelling decisions
 
-**Only the `downloads` total is kept as a time series.** Each plugin carries an
+**Only the** `downloads` **total is kept as a time series.** Each plugin carries an
 average of 13.5 per-version entries in the source file (95596 across the whole
 registry). Turning those into time series would mean 95596 × 2130 ≈ **200
 million rows**, against an upper bound of 15 million for the totals alone.
@@ -115,11 +117,11 @@ node --test tests/*.test.js
 
 ## Size of the generated output
 
-| | Size |
-|---|---|
-| One plugin's full history (2130 days) | 18 KB, 5 KB gzipped |
-| Search index (7147 plugins) | 418 KB, 156 KB gzipped |
-| Whole site | about 73 MB |
+|                                       | Size                   |
+| ------------------------------------- | ---------------------- |
+| One plugin's full history (2130 days) | 18 KB, 5 KB gzipped    |
+| Search index (7147 plugins)           | 418 KB, 156 KB gzipped |
+| Whole site                            | about 73 MB            |
 
 GitHub Pages allows 1 GB per site, so there is plenty of headroom. Looking up a
 plugin costs the index plus a single 5 KB file, which is why the time series is
