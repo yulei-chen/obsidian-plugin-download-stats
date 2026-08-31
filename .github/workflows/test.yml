@@ -14,7 +14,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: node --test 'tests/*.test.js'
+      # Unquoted so the shell expands the glob: node only resolves glob
+      # patterns itself from v22 on.
+      - run: node --test tests/*.test.js
 
       - uses: actions/setup-python@v5
         with:

@@ -3,7 +3,7 @@
  * increments across gaps, clamping drops in the cumulative count, and bucket
  * alignment for weeks and months.
  *
- * Run with: node --test 'tests/*.test.js'
+ * Run with: node --test tests/*.test.js
  */
 const test = require('node:test');
 const assert = require('node:assert');

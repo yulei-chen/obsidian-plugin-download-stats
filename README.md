@@ -110,7 +110,7 @@ The series math is unit tested — gap spreading, clamped drops, week and month
 alignment:
 
 ```bash
-node --test 'tests/*.test.js'
+node --test tests/*.test.js
 ```
 
 ## Size of the generated output
