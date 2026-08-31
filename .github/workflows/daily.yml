@@ -1,0 +1,75 @@
+name: Update and publish
+
+on:
+  schedule:
+    # Upstream commits around 00:30 UTC; fetch at 03:30 UTC to leave slack.
+    - cron: '30 3 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['site/**', 'scripts/**', '.github/workflows/daily.yml']
+
+permissions:
+  contents: write   # read and write the release holding the database
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # The database lives as a release asset rather than in the repository.
+      # Committing a hundred-megabyte binary daily would grow .git without
+      # bound, whereas a release asset is overwritten in place and does not
+      # count towards repository size.
+      - name: Restore database
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release download data-latest --pattern 'stats.db.gz' --clobber 2>/dev/null; then
+            gunzip -f stats.db.gz
+            echo "Restored database: $(du -h stats.db | cut -f1)"
+          else
+            echo "::warning::No existing database found, starting empty. Run the backfill workflow first."
+          fi
+
+      - name: Fetch latest snapshots
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/update.py
+
+      - name: Generate static data
+        run: python scripts/export.py
+
+      - name: Store database
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gzip -9 -k -f stats.db
+          gh release create data-latest --title 'Database snapshot' --notes 'Maintained automatically by CI. Do not edit by hand.' 2>/dev/null || true
+          gh release upload data-latest stats.db.gz --clobber
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

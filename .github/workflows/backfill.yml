@@ -1,0 +1,50 @@
+name: Backfill history
+
+# One-off job that walks the entire obsidian-releases commit history to rebuild
+# the database. Normally run once, after which daily.yml keeps it current.
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Process only the N oldest commits (leave empty for all)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Resume on top of an existing database instead of starting over.
+      - name: Restore existing database if present
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release download data-latest --pattern 'stats.db.gz' --clobber 2>/dev/null; then
+            gunzip -f stats.db.gz
+          fi
+
+      - name: Backfill
+        run: |
+          if [ -n "${{ inputs.limit }}" ]; then
+            python scripts/backfill.py --limit "${{ inputs.limit }}"
+          else
+            python scripts/backfill.py
+          fi
+
+      - name: Upload database
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gzip -9 -k -f stats.db
+          gh release create data-latest --title 'Database snapshot' --notes 'Maintained automatically by CI. Do not edit by hand.' 2>/dev/null || true
+          gh release upload data-latest stats.db.gz --clobber

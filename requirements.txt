@@ -1,0 +1,5 @@
+# No third-party runtime dependencies; the Python 3.11+ standard library
+# (sqlite3 / urllib / json / subprocess) is enough.
+#
+# This file exists to give CI and dependency scanners a known location.
+# Pin versions here if a dependency is ever added.
