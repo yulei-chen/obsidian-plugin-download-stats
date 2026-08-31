@@ -190,7 +190,9 @@ body {
   flex-wrap: wrap;
   gap: 8px 20px;
   justify-content: space-between;
-  margin: 48px 0 32px;
+  /* auto on the inline axis, otherwise this shorthand would override the
+     margin-inline: auto that .wrap relies on for centring. */
+  margin: 48px auto 32px;
   padding-top: 18px;
   border-top: 1px solid var(--border);
   color: var(--muted);

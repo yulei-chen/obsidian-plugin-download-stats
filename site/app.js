@@ -1,7 +1,7 @@
 'use strict';
 
 const DAY = 86400;
-const state = { index: null, plugin: null, granularity: 'daily', mode: 'delta', range: 0 };
+const state = { index: null, plugin: null, granularity: 'weekly', mode: 'delta', range: 0 };
 let chart = null;
 
 const $ = (id) => document.getElementById(id);
