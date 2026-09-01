@@ -60,6 +60,25 @@ body {
 .source, a { color: var(--accent); text-decoration: none; }
 .source:hover, a:hover { text-decoration: underline; }
 
+.topbar-links {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-size: 14px;
+}
+
+.icon-link {
+  display: flex;
+  color: var(--muted);
+}
+
+.icon-link:hover {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.icon-link svg { fill: currentColor; }
+
 .search {
   position: relative;
   margin: 40px 0 24px;
