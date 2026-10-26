@@ -126,3 +126,5 @@ node --test tests/*.test.js
 GitHub Pages allows 1 GB per site, so there is plenty of headroom. Looking up a
 plugin costs the index plus a single 5 KB file, which is why the time series is
 stored as plain arrays rather than delta encoded.
+
+.
